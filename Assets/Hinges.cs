@@ -233,7 +233,6 @@ public class Hinges : MonoBehaviour {
 			solved = true;
 			HingeAudio.PlaySoundAtTransform("Ding", module.transform);
 			yield return new WaitForSeconds(.25f);
-			module.transform.localPosition = new Vector3(module.transform.localPosition.x, .1f, module.transform.localPosition.z);
 			moduleRigidBody.isKinematic = false;
 
 			var x = module.transform.position.x + Random.Range(-1f, 1f); var y = module.transform.position.y + Random.Range(-1f, 1f); var z = module.transform.position.z + Random.Range(-1f, 1f);
@@ -274,7 +273,6 @@ public class Hinges : MonoBehaviour {
 		solved = true;
 		HingeAudio.PlaySoundAtTransform("Ding", module.transform);
 		yield return new WaitForSeconds(.25f);
-		module.transform.localPosition = new Vector3(module.transform.localPosition.x, .1f, module.transform.localPosition.z);
 		moduleRigidBody.isKinematic = false;
 
 		var x = module.transform.position.x + Random.Range(-1f, 1f); var y = module.transform.position.y + Random.Range(-1f, 1f); var z = module.transform.position.z + Random.Range(-1f, 1f);
@@ -285,6 +283,8 @@ public class Hinges : MonoBehaviour {
 		HingeModule.HandlePass();
 		yield break;
 	}
+
+	int TwitchModuleScore = 9;
 
 	string TwitchHelpMessage = "Use '!{0} 1234 5 6 7 8' to press all the hinges.";
 
