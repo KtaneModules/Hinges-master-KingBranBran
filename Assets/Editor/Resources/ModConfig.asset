@@ -14,8 +14,8 @@ MonoBehaviour:
   id: hinges
   title: Hinges
   author: KingBranBran
-  description: "Remove all the hinges from the sides of the module!\r\n\r\nHTML: coming
-    soon!\r\nPDF: https://puu.sh/EQ0zK.pdf"
+  description: "Remove all the hinges from the sides of the module!\r\n\r\nHTML: https://ktane.timwi.de/HTML/Hinges.html\nPDF:
+    https://ktane.timwi.de/PDF/Hinges.pdf"
   version: 1
   outputFolder: C:\Users\kingb\Documents\KTANE\Modding\Projects\AssetBundles
   previewImage: {fileID: 2800000, guid: 7548cdf18380ff9499dfd489642af7c5, type: 3}
