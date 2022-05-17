@@ -289,10 +289,10 @@ public class Hinges : MonoBehaviour {
 
     IEnumerator TwitchHandleForcedSolve()
     {
-		module.OnFocus = null;
-		module.OnDefocus = null;
-		isSelected = true;
-		for (int i = stage; i < amountHingesInit; i++)
+        module.OnFocus = null;
+        module.OnDefocus = null;
+        isSelected = true;
+        for (int i = stage; i < amountHingesInit; i++)
         {
             for (int j = hingesPressed; j < correctButtonSolutions[i].Length; j++)
             {
