@@ -38,11 +38,12 @@ public class Hinges : MonoBehaviour {
 	private string input = "";
 	private bool solved = false;
 	private bool animationInProgress = false;
+	private bool isSelected = false;
 
 	void Awake()
     {
 		_moduleId = _moduleIdCounter++;
-		// The wierd stuff at end of condition is for unicorn.
+		// The weird stuff at end of condition is for unicorn.
 		for (int i = 0; (hingeStatus.Sum() < 4 || hingeStatus.Sum() > 7) && (i < 1 || 0 != Random.Range(0, 50)); i++) {
 			hingeStatus = new[] { Random.Range(0, 2), Random.Range(0, 2), Random.Range(0, 2), Random.Range(0, 2), Random.Range(0, 2), Random.Range(0, 2), Random.Range(0, 2), Random.Range(0, 2)};
 		}
@@ -60,18 +61,23 @@ public class Hinges : MonoBehaviour {
 		GenerateSolution();
 	}
 
-
 	void Start()
 	{
+		// Used to prevent selection of hinges from other side of bomb.
+		module.OnFocus += delegate { isSelected = true; };
+		module.OnDefocus += delegate { isSelected = false; };
+		// Above code does not work in TestHarness, so force mod to always be selected in TestHarness.
+		if (Application.isEditor) isSelected = true;
+
 		for (int i = 0; i < hinges.Length; i++) 
 		{
 			var j = i;
 			hinges[j].OnInteract += delegate { HingePressed(j); return false; };
 		}
 	}
+
 	void Update()
 	{
-
 		for (int i = 0; i < hingeGameObject.Length; i++)
 		{
 			var hingeEnabled = hingeStatus[i] == 0 ? false : true;
@@ -82,6 +88,9 @@ public class Hinges : MonoBehaviour {
 
 	void HingePressed(int hinge)
 	{
+		if (!isSelected)
+			return;
+
 		HingeAudio.PlaySoundAtTransform("HingeTap", hinges[hinge].transform);
 
 		if (solved || animationInProgress)
@@ -254,37 +263,7 @@ public class Hinges : MonoBehaviour {
 		Debug.LogFormat("[Hinges #{0}] {1}", _moduleId, logData);
 	}
 
-	void TwitchHandleForcedSolve()
-	{
-		stage = amountHingesInit;
-		StartCoroutine(ForceSolve());
-	}
-
-	private IEnumerator ForceSolve()
-	{
-		animationInProgress = true;
-		HingeAudio.PlaySoundAtTransform("HingeRip", module.transform);
-
-		yield return new WaitForSeconds(.77f);
-
-		hingeStatus = new[] { 0, 0, 0, 0, 0, 0, 0, 0 };
-
-		DebugLog("Force solving.");
-		solved = true;
-		HingeAudio.PlaySoundAtTransform("Ding", module.transform);
-		yield return new WaitForSeconds(.25f);
-		moduleRigidBody.isKinematic = false;
-
-		var x = module.transform.position.x + Random.Range(-1f, 1f); var y = module.transform.position.y + Random.Range(-1f, 1f); var z = module.transform.position.z + Random.Range(-1f, 1f);
-		var randomNumbers = new[] { 5, 7, 9, -5, -7, -9 };
-		moduleRigidBody.AddForceAtPosition(new Vector3(randomNumbers[Random.Range(0, 6)], randomNumbers[Random.Range(0, 6)], randomNumbers[Random.Range(0, 6)]), new Vector3(x, y, z));
-		statusLight.SetActive(true);
-
-		HingeModule.HandlePass();
-		yield break;
-	}
-
-	int TwitchModuleScore = 9;
+	int TwitchModuleScore = 11;
 
 	string TwitchHelpMessage = "Use '!{0} 1234 5 6 7 8' to press all the hinges.";
 
@@ -298,7 +277,7 @@ public class Hinges : MonoBehaviour {
 
 			for (int i = 0; i < parts.Count(); i++)
 			{
-				HingePressed(int.Parse(parts[i].ToString()) - 1);
+				hinges[int.Parse(parts[i].ToString()) - 1].OnInteract();
 				yield return new WaitForSeconds(.2f);
 			}
 			yield return new WaitForSeconds(.6f);
@@ -306,5 +285,22 @@ public class Hinges : MonoBehaviour {
 
 		if (solved)
 			yield return "solve";
+	}
+
+    IEnumerator TwitchHandleForcedSolve()
+    {
+        for (int i = stage; i < amountHingesInit; i++)
+        {
+            for (int j = hingesPressed; j < correctButtonSolutions[i].Length; j++)
+            {
+                int temp = 0;
+                int.TryParse(correctButtonSolutions[i][j]+"", out temp);
+                temp--;
+                hinges[temp].OnInteract();
+                yield return new WaitForSeconds(0.2f);
+            }
+            while (animationInProgress && !solved) { yield return true; }
+        }
+		while (!statusLight.activeSelf) { yield return true; }
 	}
 }
