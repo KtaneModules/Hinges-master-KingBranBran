@@ -47,6 +47,8 @@ public class Hinges : MonoBehaviour {
 			hingeStatus = new[] { Random.Range(0, 2), Random.Range(0, 2), Random.Range(0, 2), Random.Range(0, 2), Random.Range(0, 2), Random.Range(0, 2), Random.Range(0, 2), Random.Range(0, 2)};
 		}
 
+		moduleRigidBody = module.GetComponent<Rigidbody>();
+
 		if (hingeStatus.Sum() < 4 || hingeStatus.Sum() > 7) { // If there is rare unicorn, only 1 hinge.
 			ModelComponent.GetComponent<MeshRenderer>().material = unicorn;
 			hingeStatus = new[] {0, 0, 0, 0, 0, 0, 0, 0};
