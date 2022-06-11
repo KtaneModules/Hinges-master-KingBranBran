@@ -252,11 +252,18 @@ public class Hinges : MonoBehaviour {
 			statusLight.SetActive(true);
 
 			HingeModule.HandlePass();
+			StartCoroutine(Disappear());
 			yield break;
 		}
 		
 		GenerateSolution();
 		animationInProgress = false;
+	}
+
+	private IEnumerator Disappear()
+	{
+		yield return new WaitForSeconds(10);
+		HingeModule.gameObject.SetActive(false);
 	}
 
 	private void DebugLog(string log, params object[] args)
